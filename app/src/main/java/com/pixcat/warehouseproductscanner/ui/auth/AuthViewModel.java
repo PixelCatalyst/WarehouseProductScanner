@@ -1,4 +1,4 @@
-package com.pixcat.warehouseproductscanner.ui.login;
+package com.pixcat.warehouseproductscanner.ui.auth;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -6,19 +6,19 @@ import androidx.lifecycle.ViewModel;
 
 import android.util.Patterns;
 
-import com.pixcat.warehouseproductscanner.data.LoginRepository;
+import com.pixcat.warehouseproductscanner.data.auth.ActiveUserRepository;
 import com.pixcat.warehouseproductscanner.data.Result;
 import com.pixcat.warehouseproductscanner.data.model.LoggedInUser;
 import com.pixcat.warehouseproductscanner.R;
 
-public class LoginViewModel extends ViewModel {
+public class AuthViewModel extends ViewModel {
 
-    private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
-    private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
-    private LoginRepository loginRepository;
+    private final MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
+    private final MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
+    private final ActiveUserRepository activeUserRepository;
 
-    LoginViewModel(LoginRepository loginRepository) {
-        this.loginRepository = loginRepository;
+    AuthViewModel(ActiveUserRepository activeUserRepository) {
+        this.activeUserRepository = activeUserRepository;
     }
 
     LiveData<LoginFormState> getLoginFormState() {
@@ -31,7 +31,7 @@ public class LoginViewModel extends ViewModel {
 
     public void login(String username, String password) {
         // can be launched in a separate asynchronous job
-        Result<LoggedInUser> result = loginRepository.login(username, password);
+        Result<LoggedInUser> result = activeUserRepository.login(username, password);
 
         if (result instanceof Result.Success) {
             LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
@@ -41,7 +41,7 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
-    public void loginDataChanged(String username, String password) {
+    public void loginFormChanged(String username, String password) {
         if (!isUserNameValid(username)) {
             loginFormState.setValue(new LoginFormState(R.string.invalid_username, null));
         } else if (!isPasswordValid(password)) {

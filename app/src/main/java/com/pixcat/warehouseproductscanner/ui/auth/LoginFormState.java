@@ -1,4 +1,4 @@
-package com.pixcat.warehouseproductscanner.ui.login;
+package com.pixcat.warehouseproductscanner.ui.auth;
 
 import androidx.annotation.Nullable;
 
@@ -6,11 +6,10 @@ import androidx.annotation.Nullable;
  * Data validation state of the login form.
  */
 class LoginFormState {
-    @Nullable
-    private Integer usernameError;
-    @Nullable
-    private Integer passwordError;
-    private boolean isDataValid;
+
+    private final Integer usernameError;
+    private final Integer passwordError;
+    private final boolean isDataValid;
 
     LoginFormState(@Nullable Integer usernameError, @Nullable Integer passwordError) {
         this.usernameError = usernameError;

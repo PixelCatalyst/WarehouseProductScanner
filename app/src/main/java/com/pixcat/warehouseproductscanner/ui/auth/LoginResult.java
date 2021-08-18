@@ -1,4 +1,4 @@
-package com.pixcat.warehouseproductscanner.ui.login;
+package com.pixcat.warehouseproductscanner.ui.auth;
 
 import androidx.annotation.Nullable;
 
@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
  * Authentication result : success (user details) or error message.
  */
 class LoginResult {
+
     @Nullable
     private LoggedInUserView success;
     @Nullable
