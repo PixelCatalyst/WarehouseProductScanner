@@ -63,8 +63,6 @@ public class LoginActivity extends AppCompatActivity {
                 updateUiWithUser(loginResult.getSuccess());
             }
             setResult(Activity.RESULT_OK);
-
-            finish();
         });
 
         TextWatcher afterTextChangedListener = new TextWatcher() {

@@ -4,12 +4,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import android.util.Patterns;
-
-import com.pixcat.warehouseproductscanner.data.auth.ActiveUserRepository;
-import com.pixcat.warehouseproductscanner.data.Result;
-import com.pixcat.warehouseproductscanner.data.model.LoggedInUser;
 import com.pixcat.warehouseproductscanner.R;
+import com.pixcat.warehouseproductscanner.data.Result;
+import com.pixcat.warehouseproductscanner.data.auth.ActiveUserRepository;
+import com.pixcat.warehouseproductscanner.data.model.ActiveUser;
 
 public class AuthViewModel extends ViewModel {
 
@@ -30,15 +28,16 @@ public class AuthViewModel extends ViewModel {
     }
 
     public void login(String username, String password) {
-        // can be launched in a separate asynchronous job
-        Result<LoggedInUser> result = activeUserRepository.login(username, password);
+        new Thread(() -> {
+            Result<ActiveUser> result = activeUserRepository.login(username, password);
 
-        if (result instanceof Result.Success) {
-            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
-        } else {
-            loginResult.setValue(new LoginResult(R.string.login_failed));
-        }
+            if (result instanceof Result.Success) {
+                ActiveUser data = ((Result.Success<ActiveUser>) result).getData();
+                loginResult.postValue(new LoginResult(new LoggedInUserView(data.getUsername())));
+            } else {
+                loginResult.postValue(new LoginResult(R.string.login_failed));
+            }
+        }).start();
     }
 
     public void loginFormChanged(String username, String password) {
@@ -56,11 +55,7 @@ public class AuthViewModel extends ViewModel {
         if (username == null) {
             return false;
         }
-        if (username.contains("@")) {
-            return Patterns.EMAIL_ADDRESS.matcher(username).matches();
-        } else {
-            return !username.trim().isEmpty();
-        }
+        return !username.trim().isEmpty();
     }
 
     // A placeholder password validation check
