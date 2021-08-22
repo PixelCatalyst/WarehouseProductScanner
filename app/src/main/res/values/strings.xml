@@ -9,4 +9,7 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="wrong_credentials">Wrong credentials</string>
+    <string name="login_error_server">Error logging in (Server error)</string>
+    <string name="login_error_unknown">Error logging in (Unknown error)</string>
 </resources>

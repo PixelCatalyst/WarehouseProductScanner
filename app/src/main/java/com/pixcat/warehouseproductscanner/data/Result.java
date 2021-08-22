@@ -1,34 +1,32 @@
 package com.pixcat.warehouseproductscanner.data;
 
-/**
- * A generic class that holds a result success w/ data or an error exception.
- */
 public class Result<T> {
 
-    private Result() {
+    private final T data;
+    private final Integer error;
+
+    public static <T> Result<T> success(T data) {
+        return new Result<>(data, null);
     }
 
-    public final static class Success<T> extends Result<T> {
-        private final T data;
-
-        public Success(T data) {
-            this.data = data;
-        }
-
-        public T getData() {
-            return this.data;
-        }
+    public static <T> Result<T> failure(Integer error) {
+        return new Result<>(null, error);
     }
 
-    public final static class Error extends Result {
-        private final Exception error;
+    private Result(T data, Integer error) {
+        this.data = data;
+        this.error = error;
+    }
 
-        public Error(Exception error) {
-            this.error = error;
-        }
+    public T getData() {
+        return data;
+    }
 
-        public Exception getError() {
-            return this.error;
-        }
+    public Integer getError() {
+        return error;
+    }
+
+    public boolean isSuccess() {
+        return error == null;
     }
 }

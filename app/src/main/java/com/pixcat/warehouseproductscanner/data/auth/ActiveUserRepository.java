@@ -24,8 +24,8 @@ public class ActiveUserRepository {
 
     public Result<ActiveUser> login(String username, String password) {
         Result<ActiveUser> result = dataSource.login(username, password);
-        if (result instanceof Result.Success) {
-            this.user = ((Result.Success<ActiveUser>) result).getData();
+        if (result.isSuccess()) {
+            this.user = result.getData();
         }
         return result;
     }

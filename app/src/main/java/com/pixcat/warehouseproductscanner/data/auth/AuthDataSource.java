@@ -1,5 +1,6 @@
 package com.pixcat.warehouseproductscanner.data.auth;
 
+import com.pixcat.warehouseproductscanner.R;
 import com.pixcat.warehouseproductscanner.data.Result;
 import com.pixcat.warehouseproductscanner.data.RetrofitServiceFactory;
 import com.pixcat.warehouseproductscanner.data.model.ActiveUser;
@@ -19,13 +20,13 @@ public class AuthDataSource {
             Response<List<String>> response = authService.getUserAuth().execute();
 
             if (response.code() == 403 || response.code() == 401) {
-                return new Result.Error(new RuntimeException("Wrong credentials"));
+                return Result.failure(R.string.wrong_credentials);
             } else if (response.code() > 400) {
-                return new Result.Error(new RuntimeException("Error logging in (" + response.code() + ")"));
+                return Result.failure(R.string.login_error_server);
             }
-            return new Result.Success<>(user);
+            return Result.success(user);
         } catch (RuntimeException | IOException e) {
-            return new Result.Error(new IOException(e.getMessage(), e.getCause()));
+            return Result.failure(R.string.login_error_unknown);
         }
     }
 }

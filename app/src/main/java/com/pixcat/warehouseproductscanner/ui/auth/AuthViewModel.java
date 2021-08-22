@@ -31,11 +31,11 @@ public class AuthViewModel extends ViewModel {
         new Thread(() -> {
             Result<ActiveUser> result = activeUserRepository.login(username, password);
 
-            if (result instanceof Result.Success) {
-                ActiveUser data = ((Result.Success<ActiveUser>) result).getData();
-                loginResult.postValue(new LoginResult(new LoggedInUserView(data.getUsername())));
+            if (result.isSuccess()) {
+                ActiveUser data = result.getData();
+                loginResult.postValue(new LoginResult(new ActiveUserView(data.getUsername())));
             } else {
-                loginResult.postValue(new LoginResult(R.string.login_failed));
+                loginResult.postValue(new LoginResult(result.getError()));
             }
         }).start();
     }
@@ -50,16 +50,11 @@ public class AuthViewModel extends ViewModel {
         }
     }
 
-    // A placeholder username validation check
     private boolean isUserNameValid(String username) {
-        if (username == null) {
-            return false;
-        }
-        return !username.trim().isEmpty();
+        return username != null && !username.trim().isEmpty();
     }
 
-    // A placeholder password validation check
     private boolean isPasswordValid(String password) {
-        return password != null && password.trim().length() > 5;
+        return password != null && !password.trim().isEmpty();
     }
 }

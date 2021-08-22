@@ -1,13 +1,10 @@
 package com.pixcat.warehouseproductscanner.ui.auth;
 
-/**
- * Class exposing authenticated user details to the UI.
- */
-class LoggedInUserView {
+class ActiveUserView {
 
     private final String displayName;
 
-    LoggedInUserView(String displayName) {
+    ActiveUserView(String displayName) {
         this.displayName = displayName;
     }
 

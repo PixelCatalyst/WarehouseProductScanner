@@ -1,16 +1,12 @@
 package com.pixcat.warehouseproductscanner.ui.auth;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.annotation.NonNull;
 
-import com.pixcat.warehouseproductscanner.data.auth.AuthDataSource;
 import com.pixcat.warehouseproductscanner.data.auth.ActiveUserRepository;
+import com.pixcat.warehouseproductscanner.data.auth.AuthDataSource;
 
-/**
- * ViewModel provider factory to instantiate LoginViewModel.
- * Required given LoginViewModel has a non-empty constructor
- */
 public class AuthViewModelFactory implements ViewModelProvider.Factory {
 
     @NonNull
