@@ -1,5 +1,7 @@
 package com.pixcat.warehouseproductscanner.data.auth;
 
+import android.util.Log;
+
 import com.pixcat.warehouseproductscanner.R;
 import com.pixcat.warehouseproductscanner.data.Result;
 import com.pixcat.warehouseproductscanner.data.RetrofitServiceFactory;
@@ -14,6 +16,8 @@ import retrofit2.Response;
 
 public class AuthDataSource {
 
+    private static final String TAG = "AuthDataSource";
+
     private static final List<String> requiredRoles = new ArrayList<>(Arrays.asList(
             UserRoles.READ_PRODUCTS,
             UserRoles.WRITE_PRODUCTS)
@@ -25,6 +29,8 @@ public class AuthDataSource {
             AuthService authService = RetrofitServiceFactory.create(AuthService.class, username, password);
             authResponse = authService.getUserAuth().execute();
         } catch (RuntimeException | IOException e) {
+            Log.d(TAG, e.getMessage(), e);
+
             return Result.failure(R.string.login_error_unknown);
         }
         return validateResponse(ActiveUser.of(username, password), authResponse);
