@@ -6,27 +6,38 @@ import com.pixcat.warehouseproductscanner.data.RetrofitServiceFactory;
 import com.pixcat.warehouseproductscanner.data.model.ActiveUser;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Response;
 
 public class AuthDataSource {
 
-    public Result<ActiveUser> login(String username, String password) {
+    private static final List<String> requiredRoles = new ArrayList<>(Arrays.asList(
+            UserRoles.READ_PRODUCTS,
+            UserRoles.WRITE_PRODUCTS)
+    );
 
+    public Result<ActiveUser> login(String username, String password) {
+        Response<List<String>> authResponse;
         try {
             AuthService authService = RetrofitServiceFactory.create(AuthService.class, username, password);
-            ActiveUser user = ActiveUser.of(username, password);
-            Response<List<String>> response = authService.getUserAuth().execute();
-
-            if (response.code() == 403 || response.code() == 401) {
-                return Result.failure(R.string.wrong_credentials);
-            } else if (response.code() > 400) {
-                return Result.failure(R.string.login_error_server);
-            }
-            return Result.success(user);
+            authResponse = authService.getUserAuth().execute();
         } catch (RuntimeException | IOException e) {
             return Result.failure(R.string.login_error_unknown);
         }
+        return validateResponse(ActiveUser.of(username, password), authResponse);
+    }
+
+    private Result<ActiveUser> validateResponse(ActiveUser user, Response<List<String>> response) {
+        if (response.code() == 403 || response.code() == 401) {
+            return Result.failure(R.string.wrong_credentials);
+        } else if (response.code() > 400) {
+            return Result.failure(R.string.login_error_server);
+        } else if (response.body() == null || !response.body().containsAll(requiredRoles)) {
+            return Result.failure(R.string.login_error_forbidden);
+        }
+        return Result.success(user);
     }
 }

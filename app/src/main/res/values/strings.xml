@@ -12,4 +12,5 @@
     <string name="wrong_credentials">Wrong credentials</string>
     <string name="login_error_server">Error logging in (Server error)</string>
     <string name="login_error_unknown">Error logging in (Unknown error)</string>
+    <string name="login_error_forbidden">Sorry, this user does not have necessary permissions</string>
 </resources>
