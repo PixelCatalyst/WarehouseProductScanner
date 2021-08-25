@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.pixcat.warehouseproductscanner.R;
 import com.pixcat.warehouseproductscanner.databinding.ActivityCreateUserBinding;
-import com.pixcat.warehouseproductscanner.ui.SharedExtras;
+import com.pixcat.warehouseproductscanner.ui.SharedExtra;
 import com.pixcat.warehouseproductscanner.ui.auth.LoginActivity;
 
 public class CreateUserActivity extends AppCompatActivity {
@@ -44,7 +44,7 @@ public class CreateUserActivity extends AppCompatActivity {
         final ProgressBar loadingProgressBar = binding.loading;
         final Button createAccountButton = binding.createAccount;
 
-        savedUsername = getIntent().getStringExtra(SharedExtras.ENTERED_USERNAME);
+        savedUsername = getIntent().getStringExtra(SharedExtra.ENTERED_USERNAME);
         if (savedUsername != null && !savedUsername.isEmpty()) {
             usernameEditText.setText(savedUsername);
         }
@@ -144,9 +144,9 @@ public class CreateUserActivity extends AppCompatActivity {
     private void backToLoginActivity() {
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         if (registeredUsername != null) {
-            intent.putExtra(SharedExtras.REGISTERED_USERNAME, registeredUsername);
+            intent.putExtra(SharedExtra.REGISTERED_USERNAME, registeredUsername);
         } else if (savedUsername != null) {
-            intent.putExtra(SharedExtras.ENTERED_USERNAME, savedUsername);
+            intent.putExtra(SharedExtra.ENTERED_USERNAME, savedUsername);
         }
         startActivity(intent);
         finish();

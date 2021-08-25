@@ -1,7 +1,9 @@
 package com.pixcat.warehouseproductscanner.ui.auth;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,7 +21,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.pixcat.warehouseproductscanner.R;
 import com.pixcat.warehouseproductscanner.data.model.ActiveUser;
 import com.pixcat.warehouseproductscanner.databinding.ActivityLoginBinding;
-import com.pixcat.warehouseproductscanner.ui.SharedExtras;
+import com.pixcat.warehouseproductscanner.ui.SharedExtra;
+import com.pixcat.warehouseproductscanner.ui.SharedPrefId;
 import com.pixcat.warehouseproductscanner.ui.register.CreateUserActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -39,12 +42,16 @@ public class LoginActivity extends AppCompatActivity {
         final Button registerButton = binding.register;
         final ProgressBar loadingProgressBar = binding.loading;
 
-        String registeredUsername = getIntent().getStringExtra(SharedExtras.REGISTERED_USERNAME);
-        String savedUsername = getIntent().getStringExtra(SharedExtras.ENTERED_USERNAME);
+        String registeredUsername = getIntent().getStringExtra(SharedExtra.REGISTERED_USERNAME);
+        String savedUsername = getIntent().getStringExtra(SharedExtra.ENTERED_USERNAME);
         if (registeredUsername != null) {
             usernameEditText.setText(registeredUsername);
         } else if (savedUsername != null) {
             usernameEditText.setText(savedUsername);
+        } else {
+            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+            String lastUsedUsername = sharedPref.getString(SharedPrefId.LAST_USED_USERNAME, "");
+            usernameEditText.setText(lastUsedUsername);
         }
 
         authViewModel = new ViewModelProvider(this, new AuthViewModelFactory())
@@ -117,16 +124,24 @@ public class LoginActivity extends AppCompatActivity {
 
         registerButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, CreateUserActivity.class);
-            intent.putExtra(SharedExtras.ENTERED_USERNAME, usernameEditText.getText().toString());
+            intent.putExtra(SharedExtra.ENTERED_USERNAME, usernameEditText.getText().toString());
             startActivity(intent);
             finish();
         });
     }
 
     private void updateUiWithUser(ActiveUser model) {
+        rememberSuccessfulLogin(model.getUsername());
+
         String welcome = getString(R.string.welcome) + model.getUsername();
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_SHORT).show();
+    }
+
+    private void rememberSuccessfulLogin(String username) {
+        SharedPreferences.Editor sharedPrefEdit = getPreferences(Context.MODE_PRIVATE).edit();
+        sharedPrefEdit.putString(SharedPrefId.LAST_USED_USERNAME, username);
+        sharedPrefEdit.apply();
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
