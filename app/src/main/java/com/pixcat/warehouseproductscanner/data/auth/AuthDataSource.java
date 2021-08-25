@@ -38,7 +38,7 @@ public class AuthDataSource {
 
     private Result<ActiveUser> validateResponse(ActiveUser user, Response<List<String>> response) {
         if (response.code() == 403 || response.code() == 401) {
-            return Result.failure(R.string.wrong_credentials);
+            return Result.failure(R.string.invalid_credentials);
         } else if (response.code() > 400) {
             return Result.failure(R.string.login_error_server);
         } else if (response.body() == null || !response.body().containsAll(requiredRoles)) {

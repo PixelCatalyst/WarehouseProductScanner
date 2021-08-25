@@ -32,8 +32,7 @@ public class AuthViewModel extends ViewModel {
             Result<ActiveUser> result = activeUserRepository.login(username, password);
 
             if (result.isSuccess()) {
-                ActiveUser data = result.getData();
-                loginResult.postValue(new LoginResult(new ActiveUserView(data.getUsername())));
+                loginResult.postValue(new LoginResult(result.getData()));
             } else {
                 loginResult.postValue(new LoginResult(result.getError()));
             }

@@ -1,6 +1,7 @@
 package com.pixcat.warehouseproductscanner.ui.auth;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,27 +17,38 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.pixcat.warehouseproductscanner.R;
+import com.pixcat.warehouseproductscanner.data.model.ActiveUser;
 import com.pixcat.warehouseproductscanner.databinding.ActivityLoginBinding;
+import com.pixcat.warehouseproductscanner.ui.SharedExtras;
+import com.pixcat.warehouseproductscanner.ui.register.CreateUserActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
     private AuthViewModel authViewModel;
-    private ActivityLoginBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        authViewModel = new ViewModelProvider(this, new AuthViewModelFactory())
-                .get(AuthViewModel.class);
 
         final EditText usernameEditText = binding.username;
         final EditText passwordEditText = binding.password;
         final Button loginButton = binding.login;
+        final Button registerButton = binding.register;
         final ProgressBar loadingProgressBar = binding.loading;
+
+        String registeredUsername = getIntent().getStringExtra(SharedExtras.REGISTERED_USERNAME);
+        String savedUsername = getIntent().getStringExtra(SharedExtras.ENTERED_USERNAME);
+        if (registeredUsername != null) {
+            usernameEditText.setText(registeredUsername);
+        } else if (savedUsername != null) {
+            usernameEditText.setText(savedUsername);
+        }
+
+        authViewModel = new ViewModelProvider(this, new AuthViewModelFactory())
+                .get(AuthViewModel.class);
 
         authViewModel.getLoginFormState().observe(this, loginFormState -> {
             if (loginFormState == null) {
@@ -57,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             loadingProgressBar.setVisibility(View.GONE);
             if (loginResult.getError() != null) {
+                registerButton.setEnabled(true);
                 showLoginFailed(loginResult.getError());
             }
             if (loginResult.getSuccess() != null) {
@@ -95,15 +108,23 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         loginButton.setOnClickListener(v -> {
+            registerButton.setEnabled(false);
             loadingProgressBar.setVisibility(View.VISIBLE);
             authViewModel.login(
                     usernameEditText.getText().toString(),
                     passwordEditText.getText().toString());
         });
+
+        registerButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CreateUserActivity.class);
+            intent.putExtra(SharedExtras.ENTERED_USERNAME, usernameEditText.getText().toString());
+            startActivity(intent);
+            finish();
+        });
     }
 
-    private void updateUiWithUser(ActiveUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
+    private void updateUiWithUser(ActiveUser model) {
+        String welcome = getString(R.string.welcome) + model.getUsername();
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_SHORT).show();
     }

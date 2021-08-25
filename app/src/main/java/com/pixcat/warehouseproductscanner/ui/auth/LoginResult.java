@@ -2,13 +2,12 @@ package com.pixcat.warehouseproductscanner.ui.auth;
 
 import androidx.annotation.Nullable;
 
-/**
- * Authentication result : success (user details) or error message.
- */
+import com.pixcat.warehouseproductscanner.data.model.ActiveUser;
+
 class LoginResult {
 
     @Nullable
-    private ActiveUserView success;
+    private ActiveUser success;
     @Nullable
     private Integer error;
 
@@ -16,12 +15,12 @@ class LoginResult {
         this.error = error;
     }
 
-    LoginResult(@Nullable ActiveUserView success) {
+    LoginResult(@Nullable ActiveUser success) {
         this.success = success;
     }
 
     @Nullable
-    ActiveUserView getSuccess() {
+    ActiveUser getSuccess() {
         return success;
     }
 

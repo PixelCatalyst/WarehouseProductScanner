@@ -1,16 +1,28 @@
 <resources>
+    <!-- General -->
     <string name="app_name">Warehouse Product Scanner</string>
-    <!-- Strings related to login -->
-    <string name="login_title">Login to Product Scanner</string>
+    <string name="action_continue">Continue</string>
+
+    <!-- Login and Register shared -->
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
+    <string name="invalid_username">Username is required</string>
+    <string name="invalid_password">Password is required</string>
+
+    <!-- Login -->
+    <string name="login_title">Login to Product Scanner</string>
     <string name="action_log_in">Log in</string>
     <string name="action_register">Create New Account</string>
     <string name="welcome">"Welcome "</string>
-    <string name="invalid_username">Username is required</string>
-    <string name="invalid_password">Password is required</string>
-    <string name="wrong_credentials">Wrong credentials</string>
+    <string name="invalid_credentials">Wrong credentials</string>
     <string name="login_error_server">Error logging in (Server error)</string>
     <string name="login_error_unknown">Error logging in (Unknown error)</string>
     <string name="login_error_forbidden">Sorry, this user does not have necessary permissions</string>
+
+    <!-- Register -->
+    <string name="register_title">Create Account</string>
+    <string name="prompt_password_repeat">Repeat password</string>
+    <string name="invalid_password_match">Passwords must match</string>
+    <string name="register_error_server">Error creating account (Server error)</string>
+    <string name="register_error_unknown">Error creating account (Unknown error)</string>
 </resources>
