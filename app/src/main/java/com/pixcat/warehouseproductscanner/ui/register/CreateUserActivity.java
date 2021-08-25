@@ -132,11 +132,10 @@ public class CreateUserActivity extends AppCompatActivity {
     }
 
     private void updateOnSuccessfulRegister(CreatedUserView model) {
+        UserCreatedNotification.create(this, model.getUsername()).show();
         registeredUsername = model.getUsername();
 
-        // TODO Send push notification instead of Toast
-        String welcome = getString(R.string.welcome) + model.getUsername();
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), R.string.account_created, Toast.LENGTH_SHORT).show();
 
         backToLoginActivity();
     }

@@ -25,4 +25,7 @@
     <string name="invalid_password_match">Passwords must match</string>
     <string name="register_error_server">Error creating account (Server error)</string>
     <string name="register_error_unknown">Error creating account (Unknown error)</string>
+    <string name="account_created">Account created</string>
+    <string name="notif_account_created_title">Account Created</string>
+    <string name="notif_account_created_content">Hello %1$s! You may now log in to the app using credentials from registration</string>
 </resources>
