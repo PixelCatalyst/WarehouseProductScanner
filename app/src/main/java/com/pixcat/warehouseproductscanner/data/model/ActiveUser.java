@@ -2,7 +2,7 @@ package com.pixcat.warehouseproductscanner.data.model;
 
 import okhttp3.Credentials;
 
-public class ActiveUser {
+public final class ActiveUser {
 
     private final String username;
     private final String authToken;

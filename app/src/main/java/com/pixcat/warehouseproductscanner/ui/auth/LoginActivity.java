@@ -23,6 +23,7 @@ import com.pixcat.warehouseproductscanner.data.model.ActiveUser;
 import com.pixcat.warehouseproductscanner.databinding.ActivityLoginBinding;
 import com.pixcat.warehouseproductscanner.ui.SharedExtra;
 import com.pixcat.warehouseproductscanner.ui.SharedPrefId;
+import com.pixcat.warehouseproductscanner.ui.main.MainNavActivity;
 import com.pixcat.warehouseproductscanner.ui.register.CreateUserActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -80,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                 showLoginFailed(loginResult.getError());
             }
             if (loginResult.getSuccess() != null) {
-                updateUiWithUser(loginResult.getSuccess());
+                updateOnSuccessfulLogin(loginResult.getSuccess());
             }
             setResult(Activity.RESULT_OK);
         });
@@ -130,12 +131,11 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUiWithUser(ActiveUser model) {
+    private void updateOnSuccessfulLogin(ActiveUser model) {
         rememberSuccessfulLogin(model.getUsername());
 
-        String welcome = getString(R.string.welcome) + model.getUsername();
-        // TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, MainNavActivity.class);
+        startActivity(intent);
     }
 
     private void rememberSuccessfulLogin(String username) {

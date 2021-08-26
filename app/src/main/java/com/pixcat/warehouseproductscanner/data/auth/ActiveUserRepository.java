@@ -29,4 +29,8 @@ public class ActiveUserRepository {
         }
         return result;
     }
+
+    public ActiveUser getUser() {
+        return user;
+    }
 }
