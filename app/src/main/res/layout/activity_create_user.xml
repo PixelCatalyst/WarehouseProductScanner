@@ -103,6 +103,6 @@
         app:layout_constraintEnd_toEndOf="@+id/password2"
         app:layout_constraintStart_toStartOf="@+id/password2"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3" />
+        app:layout_constraintVertical_bias="0.38" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
