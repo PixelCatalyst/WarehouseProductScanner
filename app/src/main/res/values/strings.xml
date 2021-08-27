@@ -28,4 +28,7 @@
     <string name="account_created">Account created</string>
     <string name="notif_account_created_title">Account Created</string>
     <string name="notif_account_created_content">Hello %1$s! You may now log in to the app using credentials from registration</string>
+    <string name="nav_menu_about">About</string>
+    <string name="nav_menu_add_product">Add Product</string>
+    <string name="nav_menu_search">Search</string>
 </resources>

@@ -1,13 +1,18 @@
 package com.pixcat.warehouseproductscanner.ui.main;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pixcat.warehouseproductscanner.R;
 import com.pixcat.warehouseproductscanner.data.auth.ActiveUserRepository;
 import com.pixcat.warehouseproductscanner.data.auth.AuthDataSource;
+import com.pixcat.warehouseproductscanner.ui.main.about.AboutFragment;
+import com.pixcat.warehouseproductscanner.ui.main.product.AddProductFragment;
+import com.pixcat.warehouseproductscanner.ui.main.search.SearchFragment;
 
 public class MainNavActivity extends AppCompatActivity {
 
@@ -20,5 +25,35 @@ public class MainNavActivity extends AppCompatActivity {
 
         String welcome = getString(R.string.welcome) + activeUserRepository.getUser().getUsername();
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_SHORT).show();
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new AboutFragment())
+                    .commit();
+        }
     }
+
+    private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
+        Fragment selectedFragment = null;
+
+        int itemId = item.getItemId();
+        if (itemId == R.id.nav_about) {
+            selectedFragment = new AboutFragment();
+        } else if (itemId == R.id.nav_add_product) {
+            selectedFragment = new AddProductFragment();
+        } else if (itemId == R.id.nav_search) {
+            selectedFragment = new SearchFragment();
+        }
+        if (selectedFragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, selectedFragment)
+                    .commit();
+        }
+        return true;
+    };
 }
