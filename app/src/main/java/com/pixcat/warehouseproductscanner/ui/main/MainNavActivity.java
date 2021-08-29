@@ -1,7 +1,6 @@
 package com.pixcat.warehouseproductscanner.ui.main;
 
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -23,16 +22,13 @@ public class MainNavActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_nav);
 
-        String welcome = getString(R.string.welcome) + activeUserRepository.getUser().getUsername();
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_SHORT).show();
-
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, new AboutFragment())
+                    .replace(R.id.fragment_container, new AboutFragment(activeUserRepository.getUser()))
                     .commit();
         }
     }
@@ -42,7 +38,7 @@ public class MainNavActivity extends AppCompatActivity {
 
         int itemId = item.getItemId();
         if (itemId == R.id.nav_about) {
-            selectedFragment = new AboutFragment();
+            selectedFragment = new AboutFragment(activeUserRepository.getUser());
         } else if (itemId == R.id.nav_add_product) {
             selectedFragment = new AddProductFragment();
         } else if (itemId == R.id.nav_search) {

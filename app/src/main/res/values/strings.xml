@@ -2,6 +2,7 @@
     <!-- General -->
     <string name="app_name">Warehouse Product Scanner</string>
     <string name="action_continue">Continue</string>
+    <string name="request_failed">Request failed</string>
 
     <!-- Login and Register shared -->
     <string name="prompt_username">Username</string>
@@ -13,7 +14,6 @@
     <string name="login_title">Login to Product Scanner</string>
     <string name="action_log_in">Log in</string>
     <string name="action_register">Create New Account</string>
-    <string name="welcome">"Welcome "</string>
     <string name="invalid_credentials">Wrong credentials</string>
     <string name="login_error_server">Error logging in (Server error)</string>
     <string name="login_error_unknown">Error logging in (Unknown error)</string>
@@ -28,7 +28,23 @@
     <string name="account_created">Account created</string>
     <string name="notif_account_created_title">Account Created</string>
     <string name="notif_account_created_content">Hello %1$s! You may now log in to the app using credentials from registration</string>
+
+    <!-- Nav menu -->
     <string name="nav_menu_about">About</string>
     <string name="nav_menu_add_product">Add Product</string>
     <string name="nav_menu_search">Search</string>
+
+    <!-- About screen -->
+    <string name="hello_banner">Hello %1$s</string>
+    <string name="about_roles">Roles assigned to you</string>
+    <string name="about_warehouse">About warehouse operations</string>
+    <string name="about_warehouse_content">
+        "The application provides access to product details service.
+        \nUser can view existing products and add new ones.
+        \nSetup of this data enables products to be packed by autonomous robots in the warehouse."
+    </string>
+    <string name="role_read_bulk_description">Allows to view batches of product details</string>
+    <string name="role_read_description">Allows to view product details</string>
+    <string name="role_write_description">Allows to edit product details</string>
+    <string name="role_unknown_description">Unknown role</string>
 </resources>
