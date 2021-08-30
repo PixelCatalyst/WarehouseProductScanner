@@ -47,4 +47,14 @@
     <string name="role_read_description">Allows to view product details</string>
     <string name="role_write_description">Allows to edit product details</string>
     <string name="role_unknown_description">Unknown role</string>
+
+    <!-- Search screen -->
+    <string name="search_banner">Search</string>
+    <string name="search_product_hint">Enter product ID or barcode</string>
+    <string name="invalid_product_id">Product ID is invalid</string>
+    <string name="action_scan_barcode">Scan barcode</string>
+    <string name="action_search_product">Search Product</string>
+    <string name="search_error_not_found">Product not found</string>
+    <string name="search_error_server">Error searching for product (Server error)</string>
+    <string name="search_error_unknown">Error searching for product (Unknown error)</string>
 </resources>
