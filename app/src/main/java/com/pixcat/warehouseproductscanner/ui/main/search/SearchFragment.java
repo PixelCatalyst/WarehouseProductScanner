@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ public class SearchFragment extends Fragment {
         AutoCompleteTextView searchTextView = view.findViewById(R.id.search_id);
         Button scanButton = view.findViewById(R.id.button_scan);
         Button searchButton = view.findViewById(R.id.button_search);
+        ProgressBar searchProgressBar = view.findViewById(R.id.searching);
         TextView errorText = view.findViewById(R.id.search_error_text);
 
         searchViewModel = new ViewModelProvider(this, new SearchViewModelFactory(activeUser))
@@ -55,6 +57,7 @@ public class SearchFragment extends Fragment {
             if (searchResult == null) {
                 return;
             }
+            searchProgressBar.setVisibility(View.GONE);
             if (searchResult.getError() != null) {
                 errorText.setVisibility(View.VISIBLE);
                 errorText.setText(searchResult.getError());
@@ -84,6 +87,8 @@ public class SearchFragment extends Fragment {
         searchTextView.addTextChangedListener(afterTextChangedListener);
         searchTextView.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                errorText.setVisibility(View.GONE);
+                searchProgressBar.setVisibility(View.VISIBLE);
                 searchViewModel.search(searchTextView.getText().toString().trim());
             }
             return false;
@@ -94,7 +99,11 @@ public class SearchFragment extends Fragment {
                 .show()
         );
 
-        searchButton.setOnClickListener(v -> searchViewModel.search(searchTextView.getText().toString().trim()));
+        searchButton.setOnClickListener(v -> {
+            errorText.setVisibility(View.GONE);
+            searchProgressBar.setVisibility(View.VISIBLE);
+            searchViewModel.search(searchTextView.getText().toString().trim());
+        });
 
         return view;
     }
