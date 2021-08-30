@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -36,6 +37,7 @@ public class SearchFragment extends Fragment {
         AutoCompleteTextView searchTextView = view.findViewById(R.id.search_id);
         Button scanButton = view.findViewById(R.id.button_scan);
         Button searchButton = view.findViewById(R.id.button_search);
+        TextView errorText = view.findViewById(R.id.search_error_text);
 
         searchViewModel = new ViewModelProvider(this, new SearchViewModelFactory(activeUser))
                 .get(SearchViewModel.class);
@@ -54,10 +56,11 @@ public class SearchFragment extends Fragment {
                 return;
             }
             if (searchResult.getError() != null) {
-                // TODO handle errors via UI
-                Toast.makeText(requireActivity().getApplicationContext(), searchResult.getError(), Toast.LENGTH_SHORT).show();
+                errorText.setVisibility(View.VISIBLE);
+                errorText.setText(searchResult.getError());
             }
             if (searchResult.getSuccess() != null) {
+                errorText.setVisibility(View.GONE);
                 Toast.makeText(requireActivity().getApplicationContext(), "TODO: search success", Toast.LENGTH_SHORT).show();
             }
         });
