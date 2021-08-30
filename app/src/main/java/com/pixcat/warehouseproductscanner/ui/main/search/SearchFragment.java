@@ -24,6 +24,7 @@ public class SearchFragment extends Fragment {
 
     private final ActiveUser activeUser;
 
+    private ProductAutoCompletion productAutoCompletion;
     private SearchViewModel searchViewModel;
 
     public SearchFragment(ActiveUser activeUser) {
@@ -34,6 +35,9 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
+
+        productAutoCompletion = new ProductAutoCompletion(requireActivity().getApplicationContext());
+        productAutoCompletion.loadStore();
 
         AutoCompleteTextView searchTextView = view.findViewById(R.id.search_id);
         Button scanButton = view.findViewById(R.id.button_scan);
@@ -64,6 +68,8 @@ public class SearchFragment extends Fragment {
             }
             if (searchResult.getSuccess() != null) {
                 errorText.setVisibility(View.GONE);
+                productAutoCompletion.updateStore(searchResult.getSearchedId());
+
                 Toast.makeText(requireActivity().getApplicationContext(), "TODO: search success", Toast.LENGTH_SHORT).show();
             }
         });
@@ -93,6 +99,8 @@ public class SearchFragment extends Fragment {
             }
             return false;
         });
+        searchTextView.setAdapter(productAutoCompletion.getAdapter());
+        searchTextView.setThreshold(productAutoCompletion.getThreshold());
 
         scanButton.setOnClickListener(v -> Toast
                 .makeText(requireActivity().getApplicationContext(), "TODO: launch camera", Toast.LENGTH_SHORT)

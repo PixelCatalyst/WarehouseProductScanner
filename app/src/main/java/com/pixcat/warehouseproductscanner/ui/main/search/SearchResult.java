@@ -6,17 +6,24 @@ import com.pixcat.warehouseproductscanner.data.model.ProductDto;
 
 public class SearchResult {
 
+    private final String searchedId;
     @Nullable
     private ProductDto success;
     @Nullable
     private Integer error;
 
-    SearchResult(@Nullable Integer error) {
+    SearchResult(String searchedId, @Nullable Integer error) {
+        this.searchedId = searchedId;
         this.error = error;
     }
 
-    SearchResult(@Nullable ProductDto success) {
+    SearchResult(String searchedId, @Nullable ProductDto success) {
+        this.searchedId = searchedId;
         this.success = success;
+    }
+
+    public String getSearchedId() {
+        return searchedId;
     }
 
     @Nullable

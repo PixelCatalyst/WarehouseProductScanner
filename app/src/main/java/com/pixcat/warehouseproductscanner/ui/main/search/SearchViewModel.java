@@ -32,9 +32,9 @@ public class SearchViewModel extends ViewModel {
             Result<ProductDto> result = productDataSource.getProductByIdOrBarcode(uniqueId);
 
             if (result.isSuccess()) {
-                searchResult.postValue(new SearchResult(result.getData()));
+                searchResult.postValue(new SearchResult(uniqueId, result.getData()));
             } else {
-                searchResult.postValue(new SearchResult(result.getError()));
+                searchResult.postValue(new SearchResult(uniqueId, result.getError()));
             }
         }).start();
     }
