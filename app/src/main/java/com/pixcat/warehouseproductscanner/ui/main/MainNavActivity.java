@@ -40,7 +40,7 @@ public class MainNavActivity extends AppCompatActivity {
         if (itemId == R.id.nav_about) {
             selectedFragment = new AboutFragment(activeUserRepository.getUser());
         } else if (itemId == R.id.nav_add_product) {
-            selectedFragment = new AddProductFragment();
+            selectedFragment = new AddProductFragment(activeUserRepository.getUser());
         } else if (itemId == R.id.nav_search) {
             selectedFragment = new SearchFragment(activeUserRepository.getUser());
         }

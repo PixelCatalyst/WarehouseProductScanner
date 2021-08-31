@@ -1,5 +1,7 @@
 package com.pixcat.warehouseproductscanner.ui.main.product;
 
+import static java.util.stream.Collectors.*;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import com.pixcat.warehouseproductscanner.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BarcodesAdapter extends RecyclerView.Adapter<BarcodesAdapter.ViewHolder> {
 
@@ -21,6 +24,12 @@ public class BarcodesAdapter extends RecyclerView.Adapter<BarcodesAdapter.ViewHo
 
     public BarcodesAdapter(List<String> barcodes) {
         this.barcodes = new ArrayList<>(barcodes);
+    }
+
+    public List<String> getBarcodes() {
+        return barcodes.stream()
+                .map(String::trim)
+                .collect(toList());
     }
 
     @NonNull

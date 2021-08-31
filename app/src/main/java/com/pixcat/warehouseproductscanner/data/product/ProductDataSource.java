@@ -43,4 +43,18 @@ public class ProductDataSource {
             return Result.failure(R.string.search_error_unknown);
         }
     }
+
+    public Result<Boolean> putProduct(ProductDto productDto) {
+        try {
+            Response<Void> putResponse = productService.putProduct(productDto.getProductId(), productDto).execute();
+
+            // TODO response code handling
+
+            return Result.success(true);
+        } catch (IOException e) {
+            Log.d(TAG, e.getMessage(), e);
+
+            return Result.failure(0); // TODO error code
+        }
+    }
 }

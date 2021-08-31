@@ -8,9 +8,9 @@ public class ProductDto {
     private final String productId;
     private final String description;
     private final String storageTemperature;
-    private final int heightInMillimeters;
-    private final int widthInMillimeters;
-    private final int lengthInMillimeters;
+    private final Integer heightInMillimeters;
+    private final Integer widthInMillimeters;
+    private final Integer lengthInMillimeters;
     private final BigDecimal weightInKilograms;
     private final List<String> barcodes;
 
@@ -18,9 +18,9 @@ public class ProductDto {
             String productId,
             String description,
             String storageTemperature,
-            int heightInMillimeters,
-            int widthInMillimeters,
-            int lengthInMillimeters,
+            Integer heightInMillimeters,
+            Integer widthInMillimeters,
+            Integer lengthInMillimeters,
             BigDecimal weightInKilograms,
             List<String> barcodes) {
         this.productId = productId;
@@ -33,8 +33,8 @@ public class ProductDto {
         this.barcodes = barcodes;
     }
 
-    public static ProductDtoBuilder builder() {
-        return new ProductDtoBuilder();
+    public static Builder builder() {
+        return new Builder();
     }
 
     public String getProductId() {
@@ -49,15 +49,15 @@ public class ProductDto {
         return this.storageTemperature;
     }
 
-    public int getHeightInMillimeters() {
+    public Integer getHeightInMillimeters() {
         return this.heightInMillimeters;
     }
 
-    public int getWidthInMillimeters() {
+    public Integer getWidthInMillimeters() {
         return this.widthInMillimeters;
     }
 
-    public int getLengthInMillimeters() {
+    public Integer getLengthInMillimeters() {
         return this.lengthInMillimeters;
     }
 
@@ -69,55 +69,56 @@ public class ProductDto {
         return this.barcodes;
     }
 
-    public static class ProductDtoBuilder {
+    public static class Builder {
+
         private String productId;
         private String description;
         private String storageTemperature;
-        private int heightInMillimeters;
-        private int widthInMillimeters;
-        private int lengthInMillimeters;
+        private Integer heightInMillimeters;
+        private Integer widthInMillimeters;
+        private Integer lengthInMillimeters;
         private BigDecimal weightInKilograms;
         private List<String> barcodes;
 
-        ProductDtoBuilder() {
+        public Builder() {
         }
 
-        public ProductDtoBuilder productId(String productId) {
+        public Builder productId(String productId) {
             this.productId = productId;
             return this;
         }
 
-        public ProductDtoBuilder description(String description) {
+        public Builder description(String description) {
             this.description = description;
             return this;
         }
 
-        public ProductDtoBuilder storageTemperature(String storageTemperature) {
+        public Builder storageTemperature(String storageTemperature) {
             this.storageTemperature = storageTemperature;
             return this;
         }
 
-        public ProductDtoBuilder heightInMillimeters(int heightInMillimeters) {
+        public Builder heightInMillimeters(Integer heightInMillimeters) {
             this.heightInMillimeters = heightInMillimeters;
             return this;
         }
 
-        public ProductDtoBuilder widthInMillimeters(int widthInMillimeters) {
+        public Builder widthInMillimeters(Integer widthInMillimeters) {
             this.widthInMillimeters = widthInMillimeters;
             return this;
         }
 
-        public ProductDtoBuilder lengthInMillimeters(int lengthInMillimeters) {
+        public Builder lengthInMillimeters(Integer lengthInMillimeters) {
             this.lengthInMillimeters = lengthInMillimeters;
             return this;
         }
 
-        public ProductDtoBuilder weightInKilograms(BigDecimal weightInKilograms) {
+        public Builder weightInKilograms(BigDecimal weightInKilograms) {
             this.weightInKilograms = weightInKilograms;
             return this;
         }
 
-        public ProductDtoBuilder barcodes(List<String> barcodes) {
+        public Builder barcodes(List<String> barcodes) {
             this.barcodes = barcodes;
             return this;
         }

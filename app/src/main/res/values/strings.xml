@@ -67,6 +67,15 @@
     <string name="action_create_product">Create</string>
     <string name="action_delete_barcode">Delete</string>
     <string name="hint_barcode_value">Barcode value</string>
+    <string name="product_id_required">Product ID is required</string>
+    <string name="height_required">Height is required</string>
+    <string name="width_required">Width is required</string>
+    <string name="length_required">Length is required</string>
+    <string name="weight_required">Weight is required</string>
+    <string name="height_above_zero">Height must be greater than zero</string>
+    <string name="width_above_zero">Width must be greater than zero</string>
+    <string name="length_above_zero">Length must be greater than zero</string>
+    <string name="weight_above_zero">Weight must be greater than zero</string>
 
     <!-- Search screen -->
     <string name="search_banner">Search</string>
