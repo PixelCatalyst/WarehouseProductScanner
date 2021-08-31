@@ -215,6 +215,26 @@
                     android:layout_height="match_parent"
                     android:layout_span="2" />
             </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/button_add_barcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_span="2"
+                    android:backgroundTint="@color/purple_500"
+                    android:contentDescription="@string/add_barcode_description"
+                    android:minWidth="120dp"
+                    android:minHeight="70dp"
+                    android:src="@drawable/ic_baseline_add_to_list"
+                    app:tint="@color/white" />
+            </TableRow>
         </TableLayout>
     </androidx.core.widget.NestedScrollView>
 

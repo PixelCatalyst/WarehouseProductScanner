@@ -77,4 +77,5 @@
     <string name="search_error_not_found">Product not found</string>
     <string name="search_error_server">Error searching for product (Server error)</string>
     <string name="search_error_unknown">Error searching for product (Unknown error)</string>
+    <string name="add_barcode_description">Add barcode</string>
 </resources>
