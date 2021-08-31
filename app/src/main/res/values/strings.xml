@@ -48,6 +48,26 @@
     <string name="role_write_description">Allows to edit product details</string>
     <string name="role_unknown_description">Unknown role</string>
 
+    <!-- Add product screen -->
+    <string name="add_product_banner">Create new product</string>
+    <string name="section_general_attributes">General attributes</string>
+    <string name="section_physical_parameters">Physical parameters</string>
+    <string name="subsection_storage_temperature">Storage temperature</string>
+    <string name="subsection_measurements">Measurements</string>
+    <string name="section_barcodes">Barcodes</string>
+    <string name="product_photo_description">Product photo</string>
+    <string name="hint_product_id">Product ID</string>
+    <string name="hint_description">Description</string>
+    <string name="radio_ambient">Ambient</string>
+    <string name="radio_chilled">Chilled</string>
+    <string name="hint_height">Height (mm)</string>
+    <string name="hint_width">Width (mm)</string>
+    <string name="hint_length">Length (mm)</string>
+    <string name="hint_weight">Weight (kg)</string>
+    <string name="action_create_product">Create</string>
+    <string name="action_delete_barcode">Delete</string>
+    <string name="hint_barcode_value">Barcode value</string>
+
     <!-- Search screen -->
     <string name="search_banner">Search</string>
     <string name="search_product_hint">Enter product ID or barcode</string>
