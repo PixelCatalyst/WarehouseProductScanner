@@ -76,7 +76,9 @@
     <string name="width_above_zero">Width must be greater than zero</string>
     <string name="length_above_zero">Length must be greater than zero</string>
     <string name="weight_above_zero">Weight must be greater than zero</string>
-
+    <string name="product_created">Product created successfully</string>
+    <string name="create_error_server">Error creating product (Server error)</string>
+    <string name="create_error_unknown">Error creating product (Unknown error)</string>
     <!-- Search screen -->
     <string name="search_banner">Search</string>
     <string name="search_product_hint">Enter product ID or barcode</string>

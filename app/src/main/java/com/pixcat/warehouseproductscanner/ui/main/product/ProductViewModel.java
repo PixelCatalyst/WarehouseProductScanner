@@ -34,11 +34,9 @@ public class ProductViewModel extends ViewModel {
             Result<Boolean> result = productDataSource.putProduct(productDto);
 
             if (result.isSuccess()) {
-                System.out.println("SUCCESS");
-                createProductResult.postValue(new CreateProductResult());
+                createProductResult.postValue(new CreateProductResult(productDto));
             } else {
-                System.out.println("FAIL");
-                createProductResult.postValue(new CreateProductResult());
+                createProductResult.postValue(new CreateProductResult(result.getError()));
             }
         }).start();
     }

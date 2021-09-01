@@ -48,13 +48,14 @@ public class ProductDataSource {
         try {
             Response<Void> putResponse = productService.putProduct(productDto.getProductId(), productDto).execute();
 
-            // TODO response code handling
-
-            return Result.success(true);
+            if (putResponse.isSuccessful()) {
+                return Result.success(true);
+            }
+            return Result.failure(R.string.create_error_server);
         } catch (IOException e) {
             Log.d(TAG, e.getMessage(), e);
 
-            return Result.failure(0); // TODO error code
+            return Result.failure(R.string.create_error_unknown);
         }
     }
 }

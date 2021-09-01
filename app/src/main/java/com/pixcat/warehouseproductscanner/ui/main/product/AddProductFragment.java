@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -56,6 +57,8 @@ public class AddProductFragment extends Fragment {
         weightEdit = view.findViewById(R.id.edit_weight);
         tempRadioGroup = view.findViewById(R.id.radio_temp);
 
+        // TODO use camera to update product photo
+
         // TODO Initial select temp based on temp red from sensors
         tempRadioGroup.check(R.id.radio_temp_ambient);
 
@@ -65,6 +68,7 @@ public class AddProductFragment extends Fragment {
 
         RecyclerView barcodesRecycler = view.findViewById(R.id.barcodes_recycler);
 
+        // TODO handle barcode changes
         ArrayList<String> barcodes = new ArrayList<>();
         barcodes.add("110011");
         barcodes.add("220022");
@@ -103,8 +107,21 @@ public class AddProductFragment extends Fragment {
             if (createProductResult == null) {
                 return;
             }
-
-            // TODO
+            if (createProductResult.getError() != null) {
+                Toast.makeText(
+                        requireActivity().getApplicationContext(),
+                        createProductResult.getError(),
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+            if (createProductResult.getSuccess() != null) {
+                Toast.makeText(
+                        requireActivity().getApplicationContext(),
+                        R.string.product_created,
+                        Toast.LENGTH_SHORT)
+                        .show();
+                // TODO launch "Show Product" Fragment
+            }
         });
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
