@@ -1,8 +1,10 @@
 package com.pixcat.warehouseproductscanner.ui.main.product;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,22 +16,29 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pixcat.warehouseproductscanner.R;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class BarcodesAdapter extends RecyclerView.Adapter<BarcodesAdapter.ViewHolder> {
 
-    private final List<String> barcodes;
+    private final List<Barcode> barcodes;
 
     public BarcodesAdapter(List<String> barcodes) {
-        this.barcodes = new ArrayList<>(barcodes);
+        this.barcodes = barcodes.stream()
+                .map(Barcode::new)
+                .collect(toList());
     }
 
     public List<String> getBarcodes() {
         return barcodes.stream()
-                .map(String::trim)
+                .map(barcode -> barcode.value.trim())
+                .filter(e -> !e.isEmpty())
+                .distinct()
                 .collect(toList());
+    }
+
+    public void addBarcode() {
+        barcodes.add(new Barcode(""));
+        notifyItemInserted(barcodes.size() - 1);
     }
 
     @NonNull
@@ -45,12 +54,38 @@ public class BarcodesAdapter extends RecyclerView.Adapter<BarcodesAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(BarcodesAdapter.ViewHolder holder, int position) {
-        String barcode = barcodes.get(position);
-
         EditText barcodeEdit = holder.barcodeEdit;
-        barcodeEdit.setText(barcode);
+        barcodeEdit.setText(barcodes.get(position).value);
+        barcodeEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // ignore
+            }
 
-//        Button button = holder.deleteButton;
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // ignore
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                barcodes.get(holder.getAdapterPosition()).value = barcodeEdit.getText().toString();
+            }
+        });
+
+        holder.deleteButton.setOnClickListener(v -> {
+            int index = holder.getAdapterPosition();
+            barcodes.remove(index);
+            notifyItemRemoved(index);
+        });
+    }
+
+    private static class Barcode {
+        String value;
+
+        public Barcode(String value) {
+            this.value = value;
+        }
     }
 
     @Override

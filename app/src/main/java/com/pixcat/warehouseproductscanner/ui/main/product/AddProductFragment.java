@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -67,17 +68,13 @@ public class AddProductFragment extends Fragment {
         createProductButton.setEnabled(false);
 
         RecyclerView barcodesRecycler = view.findViewById(R.id.barcodes_recycler);
-
-        // TODO handle barcode changes
-        ArrayList<String> barcodes = new ArrayList<>();
-        barcodes.add("110011");
-        barcodes.add("220022");
-        barcodes.add("330033");
-
-        barcodesAdapter = new BarcodesAdapter(barcodes);
+        barcodesAdapter = new BarcodesAdapter(new ArrayList<>());
         barcodesRecycler.setAdapter(barcodesAdapter);
         barcodesRecycler.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         barcodesRecycler.setNestedScrollingEnabled(false);
+
+        ImageButton addBarcodeButton = view.findViewById(R.id.button_add_barcode);
+        addBarcodeButton.setOnClickListener(v -> barcodesAdapter.addBarcode());
 
         productViewModel = new ViewModelProvider(this, new ProductViewModelFactory(activeUser))
                 .get(ProductViewModel.class);
