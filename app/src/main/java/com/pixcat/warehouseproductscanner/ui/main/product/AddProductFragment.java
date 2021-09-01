@@ -1,5 +1,10 @@
 package com.pixcat.warehouseproductscanner.ui.main.product;
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,6 +46,8 @@ public class AddProductFragment extends Fragment {
     private RadioGroup tempRadioGroup;
     private BarcodesAdapter barcodesAdapter;
 
+    private SensorManager sensorManager;
+
     public AddProductFragment(ActiveUser activeUser) {
         this.activeUser = activeUser;
     }
@@ -57,11 +64,9 @@ public class AddProductFragment extends Fragment {
         lengthEdit = view.findViewById(R.id.edit_length);
         weightEdit = view.findViewById(R.id.edit_weight);
         tempRadioGroup = view.findViewById(R.id.radio_temp);
+        detectAmbientTemperature();
 
         // TODO use camera to update product photo
-
-        // TODO Initial select temp based on temp red from sensors
-        tempRadioGroup.check(R.id.radio_temp_ambient);
 
         Button createProductButton = view.findViewById(R.id.button_create_product);
         createProductButton.setOnClickListener(v -> dispatchCreation());
@@ -146,6 +151,32 @@ public class AddProductFragment extends Fragment {
         tempRadioGroup.setOnCheckedChangeListener((group, checkedId) -> notifyFormUpdate());
 
         return view;
+    }
+
+    private void detectAmbientTemperature() {
+        SensorEventListener temperatureListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                float ambientCelsius = event.values[0];
+                tempRadioGroup.check(ambientCelsius < 10.0f
+                        ? R.id.radio_temp_chilled
+                        : R.id.radio_temp_ambient);
+
+                sensorManager.unregisterListener(this);
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                // ignore
+            }
+        };
+        sensorManager = (SensorManager) requireActivity().getSystemService(Context.SENSOR_SERVICE);
+        Sensor temperature = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        sensorManager.registerListener(temperatureListener, temperature, SensorManager.SENSOR_DELAY_UI);
+
+        if (tempRadioGroup.getCheckedRadioButtonId() == -1) {
+            tempRadioGroup.check(R.id.radio_temp_ambient);
+        }
     }
 
     private void dispatchCreation() {
