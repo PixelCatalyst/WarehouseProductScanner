@@ -27,6 +27,10 @@ public class SearchViewModel extends ViewModel {
         return searchResult;
     }
 
+    public void consumeSearchResult() {
+        searchResult.postValue(null);
+    }
+
     public void search(String uniqueId) {
         new Thread(() -> {
             Result<ProductDto> result = productDataSource.getProductByIdOrBarcode(uniqueId);

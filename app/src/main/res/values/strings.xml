@@ -79,6 +79,7 @@
     <string name="product_created">Product created successfully</string>
     <string name="create_error_server">Error creating product (Server error)</string>
     <string name="create_error_unknown">Error creating product (Unknown error)</string>
+
     <!-- Search screen -->
     <string name="search_banner">Search</string>
     <string name="search_product_hint">Enter product ID or barcode</string>
@@ -89,4 +90,14 @@
     <string name="search_error_server">Error searching for product (Server error)</string>
     <string name="search_error_unknown">Error searching for product (Unknown error)</string>
     <string name="add_barcode_description">Add barcode</string>
+
+    <!-- View product screen -->
+    <string name="view_product_banner">Product view</string>
+    <string name="height_label">Height</string>
+    <string name="width_label">Width</string>
+    <string name="length_label">Length</string>
+    <string name="weight_label">Weight</string>
+    <string name="weight_unit">kg</string>
+    <string name="measure_unit">mm</string>
+
 </resources>

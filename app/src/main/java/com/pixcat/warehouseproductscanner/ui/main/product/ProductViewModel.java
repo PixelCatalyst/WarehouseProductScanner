@@ -29,6 +29,10 @@ public class ProductViewModel extends ViewModel {
         return createProductResult;
     }
 
+    public void consumeCreateProductResult() {
+        createProductResult.postValue(null);
+    }
+
     public void createProduct(ProductDto productDto) {
         new Thread(() -> {
             Result<Boolean> result = productDataSource.putProduct(productDto);

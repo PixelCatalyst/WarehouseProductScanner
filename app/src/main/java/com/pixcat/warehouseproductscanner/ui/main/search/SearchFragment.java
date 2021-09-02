@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.pixcat.warehouseproductscanner.R;
 import com.pixcat.warehouseproductscanner.data.model.ActiveUser;
+import com.pixcat.warehouseproductscanner.ui.main.product.ViewProductFragment;
 
 public class SearchFragment extends Fragment {
 
@@ -70,7 +71,12 @@ public class SearchFragment extends Fragment {
                 errorText.setVisibility(View.GONE);
                 productAutoCompletion.updateStore(searchResult.getSearchedId());
 
-                Toast.makeText(requireActivity().getApplicationContext(), "TODO: search success", Toast.LENGTH_SHORT).show();
+                searchViewModel.consumeSearchResult();
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new ViewProductFragment(searchResult.getSuccess()))
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 

@@ -3,6 +3,7 @@ package com.pixcat.warehouseproductscanner.ui.main.product;
 import static java.util.stream.Collectors.toList;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -21,11 +22,13 @@ import java.util.List;
 public class BarcodesAdapter extends RecyclerView.Adapter<BarcodesAdapter.ViewHolder> {
 
     private final List<Barcode> barcodes;
+    private final boolean barcodesEditable;
 
-    public BarcodesAdapter(List<String> barcodes) {
+    public BarcodesAdapter(List<String> barcodes, boolean barcodesEditable) {
         this.barcodes = barcodes.stream()
                 .map(Barcode::new)
                 .collect(toList());
+        this.barcodesEditable = barcodesEditable;
     }
 
     public List<String> getBarcodes() {
@@ -73,11 +76,22 @@ public class BarcodesAdapter extends RecyclerView.Adapter<BarcodesAdapter.ViewHo
             }
         });
 
-        holder.deleteButton.setOnClickListener(v -> {
-            int index = holder.getAdapterPosition();
-            barcodes.remove(index);
-            notifyItemRemoved(index);
-        });
+        if (barcodesEditable) {
+            holder.deleteButton.setOnClickListener(v -> {
+                int index = holder.getAdapterPosition();
+                barcodes.remove(index);
+                notifyItemRemoved(index);
+            });
+        } else {
+            Resources.Theme contextTheme = holder.itemView.getContext().getTheme();
+            int black = holder.itemView
+                    .getResources()
+                    .getColor(R.color.black, contextTheme);
+            barcodeEdit.setTextColor(black);
+            barcodeEdit.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            barcodeEdit.setEnabled(false);
+            holder.deleteButton.setVisibility(View.GONE);
+        }
     }
 
     private static class Barcode {

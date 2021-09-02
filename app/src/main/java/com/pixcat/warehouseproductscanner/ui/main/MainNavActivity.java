@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pixcat.warehouseproductscanner.R;
@@ -45,6 +46,8 @@ public class MainNavActivity extends AppCompatActivity {
             selectedFragment = new SearchFragment(activeUserRepository.getUser());
         }
         if (selectedFragment != null) {
+            getSupportFragmentManager()
+                    .popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container, selectedFragment)

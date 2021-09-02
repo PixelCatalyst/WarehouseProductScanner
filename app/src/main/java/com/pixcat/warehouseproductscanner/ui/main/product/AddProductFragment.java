@@ -73,7 +73,7 @@ public class AddProductFragment extends Fragment {
         createProductButton.setEnabled(false);
 
         RecyclerView barcodesRecycler = view.findViewById(R.id.barcodes_recycler);
-        barcodesAdapter = new BarcodesAdapter(new ArrayList<>());
+        barcodesAdapter = new BarcodesAdapter(new ArrayList<>(), true);
         barcodesRecycler.setAdapter(barcodesAdapter);
         barcodesRecycler.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
         barcodesRecycler.setNestedScrollingEnabled(false);
@@ -122,7 +122,13 @@ public class AddProductFragment extends Fragment {
                         R.string.product_created,
                         Toast.LENGTH_SHORT)
                         .show();
-                // TODO launch "Show Product" Fragment
+
+                productViewModel.consumeCreateProductResult();
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new ViewProductFragment(createProductResult.getSuccess()))
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
