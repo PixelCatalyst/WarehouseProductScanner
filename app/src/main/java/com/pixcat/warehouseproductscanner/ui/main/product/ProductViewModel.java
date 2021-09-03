@@ -33,12 +33,17 @@ public class ProductViewModel extends ViewModel {
         createProductResult.postValue(null);
     }
 
-    public void createProduct(ProductDto productDto) {
+    public void createProduct(ProductDto productDto, byte[] imageBuffer) {
         new Thread(() -> {
             Result<Boolean> result = productDataSource.putProduct(productDto);
 
             if (result.isSuccess()) {
-                createProductResult.postValue(new CreateProductResult(productDto));
+                Result<Boolean> imageResult = Result.failure(-1);
+                if (imageBuffer != null) {
+                    imageResult = productDataSource.putImage(productDto.getProductId(), imageBuffer);
+                }
+
+                createProductResult.postValue(new CreateProductResult(productDto, imageResult.isSuccess()));
             } else {
                 createProductResult.postValue(new CreateProductResult(result.getError()));
             }

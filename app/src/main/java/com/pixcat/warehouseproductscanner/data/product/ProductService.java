@@ -2,6 +2,7 @@ package com.pixcat.warehouseproductscanner.data.product;
 
 import com.pixcat.warehouseproductscanner.data.model.ProductDto;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -18,4 +19,7 @@ public interface ProductService {
 
     @PUT("/v1/products/{productId}")
     Call<Void> putProduct(@Path("productId") String productId, @Body ProductDto productDto);
+
+    @PUT("/v1/products/{productId}/image")
+    Call<Void> putImage(@Path("productId") String productId, @Body RequestBody bytes);
 }

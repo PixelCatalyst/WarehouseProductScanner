@@ -1,23 +1,42 @@
 package com.pixcat.warehouseproductscanner.ui.main.product;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.Image;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.core.Camera;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ExperimentalGetImage;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.ImageProxy;
+import androidx.camera.core.Preview;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,9 +45,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.pixcat.warehouseproductscanner.R;
 import com.pixcat.warehouseproductscanner.data.model.ActiveUser;
 import com.pixcat.warehouseproductscanner.data.model.ProductDto;
+import com.pixcat.warehouseproductscanner.ui.camera.CameraWrapper;
 
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class AddProductFragment extends Fragment {
 
@@ -45,8 +68,13 @@ public class AddProductFragment extends Fragment {
     private EditText weightEdit;
     private RadioGroup tempRadioGroup;
     private BarcodesAdapter barcodesAdapter;
+    private ImageView imageView;
 
     private SensorManager sensorManager;
+
+    private ImageCapture imageCapture;
+    private Camera camera;
+    private byte[] imageBuffer;
 
     public AddProductFragment(ActiveUser activeUser) {
         this.activeUser = activeUser;
@@ -64,9 +92,11 @@ public class AddProductFragment extends Fragment {
         lengthEdit = view.findViewById(R.id.edit_length);
         weightEdit = view.findViewById(R.id.edit_weight);
         tempRadioGroup = view.findViewById(R.id.radio_temp);
+        imageView = view.findViewById(R.id.product_image_add);
+
         detectAmbientTemperature();
 
-        // TODO use camera to update product photo
+        attachCameraToView(view);
 
         Button createProductButton = view.findViewById(R.id.button_create_product);
         createProductButton.setOnClickListener(v -> dispatchCreation());
@@ -119,11 +149,15 @@ public class AddProductFragment extends Fragment {
             if (createProductResult.getSuccess() != null) {
                 Toast.makeText(
                         requireActivity().getApplicationContext(),
-                        R.string.product_created,
-                        Toast.LENGTH_SHORT)
+                        getString(R.string.product_created) + ". " +
+                                (createProductResult.isImageSuccess()
+                                        ? getString(R.string.image_upload_success)
+                                        : getString(R.string.image_upload_fail)),
+                        Toast.LENGTH_LONG)
                         .show();
 
                 productViewModel.consumeCreateProductResult();
+                imageBuffer = null;
                 getParentFragmentManager()
                         .beginTransaction()
                         .replace(R.id.fragment_container, new ViewProductFragment(createProductResult.getSuccess()))
@@ -185,9 +219,84 @@ public class AddProductFragment extends Fragment {
         }
     }
 
+    private void attachCameraToView(View view) {
+        ProcessCameraProvider cameraProvider = CameraWrapper.getInstance().getCameraProvider();
+
+        if (cameraProvider == null) {
+            imageView.setOnClickListener(v -> Toast
+                    .makeText(requireContext(), getString(R.string.camera_unavailable_message), Toast.LENGTH_LONG)
+                    .show());
+        } else {
+            imageCapture = new ImageCapture.Builder()
+                    .setTargetRotation(Surface.ROTATION_270)
+                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                    .build();
+
+            Preview preview = new Preview.Builder()
+                    .build();
+            PreviewView previewView = view.findViewById(R.id.camera_preview);
+            preview.setSurfaceProvider(previewView.getSurfaceProvider());
+            RelativeLayout previewWrapper = view.findViewById(R.id.camera_preview_wrapper);
+            Button previewButton = view.findViewById(R.id.camera_preview_button);
+            NestedScrollView productScrollView = view.findViewById(R.id.product_scroll_view);
+
+            cameraProvider.unbindAll();
+            camera = cameraProvider.bindToLifecycle(
+                    getViewLifecycleOwner(),
+                    CameraSelector.DEFAULT_BACK_CAMERA,
+                    preview,
+                    imageCapture);
+            imageView.setOnClickListener(v -> {
+                productScrollView.setVisibility(View.GONE);
+                previewWrapper.setVisibility(View.VISIBLE);
+            });
+
+            previewButton.setOnClickListener(v -> imageCapture.takePicture(
+                    ContextCompat.getMainExecutor(requireActivity()),
+                    new ImageCapture.OnImageCapturedCallback() {
+
+                        @Override
+                        @ExperimentalGetImage
+                        public void onCaptureSuccess(@NonNull ImageProxy image) {
+                            super.onCaptureSuccess(image);
+
+                            previewWrapper.setVisibility(View.GONE);
+                            productScrollView.setVisibility(View.VISIBLE);
+
+                            Image.Plane[] planes = Objects.requireNonNull(image.getImage()).getPlanes();
+                            if (planes.length > 0) {
+                                ByteBuffer buffer = planes[0].getBuffer();
+                                buffer.rewind();
+                                byte[] bytes = new byte[buffer.capacity()];
+                                buffer.get(bytes);
+                                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                Matrix rotationMatrix = new Matrix();
+                                rotationMatrix.postRotate(90.0f);
+                                Bitmap rotated = Bitmap.createBitmap(
+                                        bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotationMatrix, true);
+
+                                ByteArrayOutputStream compressedStream = new ByteArrayOutputStream();
+                                rotated.compress(Bitmap.CompressFormat.PNG, 100, compressedStream);
+                                imageBuffer = compressedStream.toByteArray();
+
+                                imageView.setImageBitmap(rotated);
+                            }
+                            image.close();
+                        }
+
+                        @Override
+                        public void onError(@NonNull ImageCaptureException exception) {
+                            super.onError(exception);
+                        }
+                    }
+            ));
+        }
+    }
+
     private void dispatchCreation() {
         ProductDto product = assembleProductData();
-        productViewModel.createProduct(product);
+
+        productViewModel.createProduct(product, imageBuffer);
     }
 
     private void notifyFormUpdate() {

@@ -9,6 +9,8 @@ import com.pixcat.warehouseproductscanner.data.model.ProductDto;
 
 import java.io.IOException;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Response;
 
 public class ProductDataSource {
@@ -51,6 +53,26 @@ public class ProductDataSource {
             if (putResponse.isSuccessful()) {
                 return Result.success(true);
             }
+
+            Log.d(TAG, "Response code: " + putResponse.code());
+            return Result.failure(R.string.create_error_server);
+        } catch (IOException e) {
+            Log.d(TAG, e.getMessage(), e);
+
+            return Result.failure(R.string.create_error_unknown);
+        }
+    }
+
+    public Result<Boolean> putImage(String productId, byte[] buffer) {
+        try {
+            RequestBody body = RequestBody.create(MediaType.parse("image/png"), buffer);
+            Response<Void> putResponse = productService.putImage(productId, body).execute();
+
+            if (putResponse.isSuccessful()) {
+                return Result.success(true);
+            }
+
+            Log.d(TAG, "Response code: " + putResponse.code());
             return Result.failure(R.string.create_error_server);
         } catch (IOException e) {
             Log.d(TAG, e.getMessage(), e);

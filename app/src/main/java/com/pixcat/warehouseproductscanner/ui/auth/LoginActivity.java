@@ -14,15 +14,16 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.pixcat.warehouseproductscanner.R;
 import com.pixcat.warehouseproductscanner.data.model.ActiveUser;
 import com.pixcat.warehouseproductscanner.databinding.ActivityLoginBinding;
 import com.pixcat.warehouseproductscanner.ui.SharedExtra;
 import com.pixcat.warehouseproductscanner.ui.SharedPrefId;
+import com.pixcat.warehouseproductscanner.ui.camera.CameraWrapper;
 import com.pixcat.warehouseproductscanner.ui.main.MainNavActivity;
 import com.pixcat.warehouseproductscanner.ui.register.CreateUserActivity;
 
@@ -129,6 +130,17 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+
+        CameraWrapper.getInstance().initCamera(this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        CameraWrapper.getInstance().onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
     private void updateOnSuccessfulLogin(ActiveUser model) {

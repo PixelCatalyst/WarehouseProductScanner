@@ -3,6 +3,7 @@
     <string name="app_name">Warehouse Product Scanner</string>
     <string name="action_continue">Continue</string>
     <string name="request_failed">Request failed</string>
+    <string name="camera_unavailable_message">Please allow camera usage to add photos</string>
 
     <!-- Login and Register shared -->
     <string name="prompt_username">Username</string>
@@ -79,6 +80,8 @@
     <string name="product_created">Product created successfully</string>
     <string name="create_error_server">Error creating product (Server error)</string>
     <string name="create_error_unknown">Error creating product (Unknown error)</string>
+    <string name="image_upload_success">Image upload successful</string>
+    <string name="image_upload_fail">Image upload failed</string>
 
     <!-- Search screen -->
     <string name="search_banner">Search</string>

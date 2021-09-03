@@ -4,6 +4,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <RelativeLayout
+        android:id="@+id/camera_preview_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:elevation="10dp">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/camera_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </androidx.camera.view.PreviewView>
+
+        <Button
+            android:id="@+id/camera_preview_button"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:text="Capture" />
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/add_product_banner"
         android:layout_width="wrap_content"
@@ -62,6 +93,7 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
+                    android:id="@+id/product_image_add"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
                     android:layout_marginEnd="5dp"
