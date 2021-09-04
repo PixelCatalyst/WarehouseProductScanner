@@ -1,7 +1,9 @@
 package com.pixcat.warehouseproductscanner.data.model;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProductDto {
 
@@ -121,6 +123,17 @@ public class ProductDto {
         public Builder barcodes(List<String> barcodes) {
             this.barcodes = barcodes;
             return this;
+        }
+
+        public Builder barcodes(String stringifiedBarcodes) {
+            this.barcodes = stringifiedBarcodes == null ? null : parseBarcodes(stringifiedBarcodes);
+            return this;
+        }
+
+        private List<String> parseBarcodes(String stringifiedBarcodes) {
+            return Arrays.stream(stringifiedBarcodes.split(";"))
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toList());
         }
 
         public ProductDto build() {

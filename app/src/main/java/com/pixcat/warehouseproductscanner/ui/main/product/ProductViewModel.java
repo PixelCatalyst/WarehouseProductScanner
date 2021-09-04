@@ -51,7 +51,7 @@ public class ProductViewModel extends ViewModel {
     }
 
     public void productFormChanged(ProductDto productDto) {
-        productFormState.setValue(new ProductFormState.Builder()
+        productFormState.postValue(new ProductFormState.Builder()
                 .productIdError(productIdShouldBePresent(productDto.getProductId()))
                 .heightError(heightShouldBePresentAndAboveZero(productDto.getHeightInMillimeters()))
                 .widthError(widthShouldBePresentAndAboveZero(productDto.getWidthInMillimeters()))

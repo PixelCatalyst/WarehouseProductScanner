@@ -45,15 +45,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.pixcat.warehouseproductscanner.R;
 import com.pixcat.warehouseproductscanner.data.model.ActiveUser;
 import com.pixcat.warehouseproductscanner.data.model.ProductDto;
+import com.pixcat.warehouseproductscanner.data.model.ProductEntity;
+import com.pixcat.warehouseproductscanner.data.product.ProductDatabase;
+import com.pixcat.warehouseproductscanner.data.product.ProductDatabaseClient;
 import com.pixcat.warehouseproductscanner.ui.camera.CameraWrapper;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class AddProductFragment extends Fragment {
+
+    private final static String CACHED_PRODUCT_ID = "CACHED_PRD";
 
     private final ActiveUser activeUser;
 
@@ -69,12 +75,15 @@ public class AddProductFragment extends Fragment {
     private RadioGroup tempRadioGroup;
     private BarcodesAdapter barcodesAdapter;
     private ImageView imageView;
+    private RecyclerView barcodesRecycler;
 
     private SensorManager sensorManager;
 
     private ImageCapture imageCapture;
     private Camera camera;
     private byte[] imageBuffer;
+
+    private ProductDatabase db;
 
     public AddProductFragment(ActiveUser activeUser) {
         this.activeUser = activeUser;
@@ -83,16 +92,11 @@ public class AddProductFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_add_product, container, false);
 
-        productIdEdit = view.findViewById(R.id.edit_productid);
-        descriptionEdit = view.findViewById(R.id.edit_description);
-        heightEdit = view.findViewById(R.id.edit_height);
-        widthEdit = view.findViewById(R.id.edit_width);
-        lengthEdit = view.findViewById(R.id.edit_length);
-        weightEdit = view.findViewById(R.id.edit_weight);
-        tempRadioGroup = view.findViewById(R.id.radio_temp);
-        imageView = view.findViewById(R.id.product_image_add);
+        View view = inflater.inflate(R.layout.fragment_add_product, container, false);
+        initWidgets(view);
+
+        db = ProductDatabaseClient.getInstance(requireContext()).getDb();
 
         detectAmbientTemperature();
 
@@ -102,7 +106,7 @@ public class AddProductFragment extends Fragment {
         createProductButton.setOnClickListener(v -> dispatchCreation());
         createProductButton.setEnabled(false);
 
-        RecyclerView barcodesRecycler = view.findViewById(R.id.barcodes_recycler);
+        barcodesRecycler = view.findViewById(R.id.barcodes_recycler);
         barcodesAdapter = new BarcodesAdapter(new ArrayList<>(), true);
         barcodesRecycler.setAdapter(barcodesAdapter);
         barcodesRecycler.setLayoutManager(new LinearLayoutManager(requireActivity().getApplicationContext()));
@@ -156,6 +160,8 @@ public class AddProductFragment extends Fragment {
                         Toast.LENGTH_LONG)
                         .show();
 
+                new Thread(() -> db.productDao().deleteById(CACHED_PRODUCT_ID))
+                        .start();
                 productViewModel.consumeCreateProductResult();
                 imageBuffer = null;
                 getParentFragmentManager()
@@ -191,6 +197,17 @@ public class AddProductFragment extends Fragment {
         tempRadioGroup.setOnCheckedChangeListener((group, checkedId) -> notifyFormUpdate());
 
         return view;
+    }
+
+    private void initWidgets(View view) {
+        productIdEdit = view.findViewById(R.id.edit_productid);
+        descriptionEdit = view.findViewById(R.id.edit_description);
+        heightEdit = view.findViewById(R.id.edit_height);
+        widthEdit = view.findViewById(R.id.edit_width);
+        lengthEdit = view.findViewById(R.id.edit_length);
+        weightEdit = view.findViewById(R.id.edit_weight);
+        tempRadioGroup = view.findViewById(R.id.radio_temp);
+        imageView = view.findViewById(R.id.product_image_add);
     }
 
     private void detectAmbientTemperature() {
@@ -265,23 +282,9 @@ public class AddProductFragment extends Fragment {
 
                             Image.Plane[] planes = Objects.requireNonNull(image.getImage()).getPlanes();
                             if (planes.length > 0) {
-                                ByteBuffer buffer = planes[0].getBuffer();
-                                buffer.rewind();
-                                byte[] bytes = new byte[buffer.capacity()];
-                                buffer.get(bytes);
-                                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                Matrix rotationMatrix = new Matrix();
-                                rotationMatrix.postRotate(90.0f);
-                                Bitmap rotated = Bitmap.createBitmap(
-                                        bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotationMatrix, true);
-
-                                ByteArrayOutputStream compressedStream = new ByteArrayOutputStream();
-                                rotated.compress(Bitmap.CompressFormat.PNG, 100, compressedStream);
-                                imageBuffer = compressedStream.toByteArray();
-
-                                imageView.setImageBitmap(rotated);
+                                new Thread(() -> processImage(image, planes[0]))
+                                        .start();
                             }
-                            image.close();
                         }
 
                         @Override
@@ -293,9 +296,75 @@ public class AddProductFragment extends Fragment {
         }
     }
 
+    private void processImage(ImageProxy image, Image.Plane plane) {
+        ByteBuffer buffer = plane.getBuffer();
+        buffer.rewind();
+        byte[] bytes = new byte[buffer.capacity()];
+        buffer.get(bytes);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        Matrix rotationMatrix = new Matrix();
+        rotationMatrix.postRotate(90.0f);
+        Bitmap rotated = Bitmap.createBitmap(
+                bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotationMatrix, true);
+
+        ByteArrayOutputStream compressedStream = new ByteArrayOutputStream();
+        rotated.compress(Bitmap.CompressFormat.PNG, 100, compressedStream);
+        imageBuffer = compressedStream.toByteArray();
+        image.close();
+
+        requireActivity().runOnUiThread(
+                () -> imageView.setImageBitmap(rotated)
+        );
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        new Thread(() -> {
+            List<ProductEntity> cachedProducts = db.productDao().getProducts(CACHED_PRODUCT_ID);
+            if (cachedProducts.size() > 0) {
+                loadCachedProduct(cachedProducts.get(0));
+            }
+        }).start();
+    }
+
+    private void loadCachedProduct(ProductEntity productEntity) {
+        ProductDto product = productBuilder
+                .productId(productEntity.productId)
+                .description(productEntity.description)
+                .heightInMillimeters(productEntity.heightInMillimeters)
+                .widthInMillimeters(productEntity.widthInMillimeters)
+                .lengthInMillimeters(productEntity.lengthInMillimeters)
+                .weightInKilograms(mapKilograms(productEntity.weightInKilograms))
+                .storageTemperature(mapCheckedRadioToTemperature(tempRadioGroup.getCheckedRadioButtonId()))
+                .barcodes(productEntity.barcodes)
+                .build();
+        productIdEdit.setText(productEntity.productId);
+        descriptionEdit.setText(productEntity.description);
+        heightEdit.setText(mapMillimeters(productEntity.heightInMillimeters));
+        widthEdit.setText(mapMillimeters(productEntity.widthInMillimeters));
+        lengthEdit.setText(mapMillimeters(productEntity.lengthInMillimeters));
+        weightEdit.setText(productEntity.weightInKilograms);
+        tempRadioGroup.check(mapTemperatureToCheckedRadio(productEntity.storageTemperature));
+
+        requireActivity().runOnUiThread(() -> {
+            barcodesAdapter = new BarcodesAdapter(product.getBarcodes(), true);
+            barcodesRecycler.setAdapter(barcodesAdapter);
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        ProductDto product = assembleProductData();
+        ProductEntity cachedProduct = ProductEntity.of(CACHED_PRODUCT_ID, product);
+        new Thread(() -> db.productDao().insert(cachedProduct)).start();
+    }
+
     private void dispatchCreation() {
         ProductDto product = assembleProductData();
-
         productViewModel.createProduct(product, imageBuffer);
     }
 
@@ -324,6 +393,13 @@ public class AddProductFragment extends Fragment {
         return null;
     }
 
+    private String mapMillimeters(Integer value) {
+        if (value != null) {
+            return value.toString();
+        }
+        return null;
+    }
+
     private BigDecimal mapKilograms(String value) {
         if (value != null && !value.trim().isEmpty()) {
             return new BigDecimal(value);
@@ -336,6 +412,14 @@ public class AddProductFragment extends Fragment {
             return "AMBIENT";
         } else {
             return "CHILL";
+        }
+    }
+
+    private Integer mapTemperatureToCheckedRadio(String temperature) {
+        if (temperature.equalsIgnoreCase("AMBIENT")) {
+            return R.id.radio_temp_ambient;
+        } else {
+            return R.id.radio_temp_chilled;
         }
     }
 }
